@@ -26,41 +26,64 @@ package dev.vivvvek.bubblepager
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
+import com.google.accompanist.pager.ExperimentalPagerApi
+import com.google.accompanist.pager.PagerState
+import com.google.accompanist.pager.rememberPagerState
 import dev.vivvvek.bubblepager.ui.theme.BubblePagerTheme
 
+@OptIn(ExperimentalPagerApi::class)
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             BubblePagerTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colors.background
-                ) {
-                    Greeting("Android")
+                val pagerState = rememberPagerState()
+                Surface(modifier = Modifier.fillMaxSize()) {
+                    BubblePagerContent(pagerState = pagerState)
                 }
+            }
+        }
+    }
+
+    @Composable
+    fun BubblePagerContent(pagerState: PagerState) {
+        BubblePager(
+            state = pagerState,
+            pageCount = pages.size,
+            modifier = Modifier.fillMaxSize(),
+            bubbleMinRadius = 48.dp,
+            bubbleMaxRadius = 12000.dp,
+            bubbleBottomPadding = 110.dp,
+        ) { page ->
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = page.toString(),
+                    style = MaterialTheme.typography.h2
+                )
             }
         }
     }
 }
 
-@Composable
-fun Greeting(name: String) {
-    Text(text = "Hello $name!")
-}
+val pages = listOf(
+    Page(1, Color.White),
+    Page(2, Color(0xFFFFA6A6)),
+    Page(3, Color(0xFF3E09AD)),
+    Page(4, Color(0xFFF1BB53)),
+    Page(5, Color.Gray),
+)
 
-@Preview(showBackground = true)
-@Composable
-fun DefaultPreview() {
-    BubblePagerTheme {
-        Greeting("Android")
-    }
-}
+data class Page(val id: Int, val color: Color)
