@@ -58,12 +58,13 @@ class MainActivity : ComponentActivity() {
     @Composable
     fun BubblePagerContent(pagerState: PagerState) {
         BubblePager(
-            state = pagerState,
+            pagerState = pagerState,
             pageCount = pages.size,
             modifier = Modifier.fillMaxSize(),
             bubbleMinRadius = 48.dp,
             bubbleMaxRadius = 12000.dp,
             bubbleBottomPadding = 110.dp,
+            bubbleColors = pages.map { it.color }
         ) { page ->
             Box(
                 modifier = Modifier.fillMaxSize(),

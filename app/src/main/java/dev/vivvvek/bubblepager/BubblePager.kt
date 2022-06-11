@@ -23,9 +23,8 @@
  */
 package dev.vivvvek.bubblepager
 
-import androidx.compose.foundation.Canvas
+import androidx.compose.animation.core.CubicBezierEasing
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
@@ -34,32 +33,44 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.lerp
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.PagerScope
 import com.google.accompanist.pager.PagerState
+import kotlin.math.absoluteValue
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
 fun BubblePager(
-    state: PagerState,
+    pagerState: PagerState,
     pageCount: Int,
     modifier: Modifier = Modifier,
     bubbleMinRadius: Dp,
     bubbleMaxRadius: Dp,
     bubbleBottomPadding: Dp,
+    bubbleColors: List<Color>,
     content: @Composable PagerScope.(Int) -> Unit
 ) {
     Box(modifier = modifier) {
         HorizontalPager(
             count = pageCount,
-            state = state,
+            state = pagerState,
             modifier = modifier.drawBehind {
-                drawRect(
-                    color = Color.Red,
-                    size = size
+                drawRect(color = bubbleColors[pagerState.currentPage], size = size)
+                val (radius, centerX) = calculateBubbleDimensions(
+                    swipeProgress = pagerState.currentPageOffset,
+                    swipeDirection = pagerState.swipeDirection,
+                    minRadius = bubbleMinRadius,
+                    maxRadius = bubbleMaxRadius
                 )
-                drawBubble(bubbleMinRadius, bubbleMaxRadius, bubbleBottomPadding)
+                drawBubble(
+                    radius = radius,
+                    centerX = centerX,
+                    bottomPadding = bubbleBottomPadding,
+                    color = bubbleColors[pagerState.nextPage]
+                )
             }
         ) { page ->
             content(page)
@@ -68,15 +79,58 @@ fun BubblePager(
 }
 
 fun DrawScope.drawBubble(
-    bubbleMinRadius: Dp,
-    bubbleMaxRadius: Dp,
-    bubbleBottomPadding: Dp
+    radius: Dp,
+    centerX: Dp,
+    bottomPadding: Dp,
+    color: Color
 ) {
     translate(size.width / 2) {
         drawCircle(
-            color = Color.Blue,
-            radius = bubbleMinRadius.toPx(),
-            center = Offset(0f, size.height - bubbleBottomPadding.toPx())
+            color = color,
+            radius = radius.toPx(),
+            center = Offset(centerX.toPx(), size.height - bottomPadding.toPx())
         )
     }
+}
+
+fun calculateBubbleDimensions(
+    swipeProgress: Float,
+    swipeDirection: SwipeDirection,
+    minRadius: Dp,
+    maxRadius: Dp
+) : Pair<Dp, Dp> {
+    // swipe value ranges between 0 to 1.0 for half of the swipe
+    // and 1.0 to 0 for the other half of the swipe
+    val swipeValue = swipeProgress.absoluteValue.let {
+        val value = if (it <= 0.5) it else 1 - it
+        lerp(0f, 2f, value)
+    }
+
+    val radius = lerp(minRadius, maxRadius, CubicBezierEasing(1f,0f,.92f,.37f).transform(swipeValue))
+    var centerX = lerp(0.dp, maxRadius, CubicBezierEasing(1f,0f,.92f,.37f).transform(swipeValue))
+
+    if (swipeDirection == SwipeDirection.LEFT) {
+        centerX = -centerX
+    }
+    if (swipeProgress.absoluteValue > 0.5) {
+        centerX = -centerX
+    }
+    return Pair(radius, centerX)
+}
+
+
+@OptIn(ExperimentalPagerApi::class)
+val PagerState.nextPage: Int
+    get() = if ((currentPage + 1) == pageCount) currentPage - 1 else currentPage + 1
+
+@OptIn(ExperimentalPagerApi::class)
+val PagerState.swipeDirection: SwipeDirection
+    get() = if (currentPageOffset > 0) SwipeDirection.RIGHT else SwipeDirection.LEFT
+
+enum class SwipeDirection {
+    LEFT, RIGHT
+}
+
+fun lerp(start: Float, end: Float, value: Float): Float {
+    return start + (end - start) * value
 }
