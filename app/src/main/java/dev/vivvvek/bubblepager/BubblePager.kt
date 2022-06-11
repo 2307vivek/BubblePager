@@ -24,6 +24,7 @@
 package dev.vivvvek.bubblepager
 
 import androidx.compose.animation.core.CubicBezierEasing
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -37,8 +38,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.lerp
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
+import com.google.accompanist.pager.PagerDefaults
 import com.google.accompanist.pager.PagerScope
 import com.google.accompanist.pager.PagerState
+import dev.chrisbanes.snapper.ExperimentalSnapperApi
 import kotlin.math.absoluteValue
 
 @OptIn(ExperimentalPagerApi::class)
@@ -57,6 +60,7 @@ fun BubblePager(
         HorizontalPager(
             count = pageCount,
             state = pagerState,
+            flingBehavior = bubblePagerFlingBehavior(pagerState),
             modifier = modifier.drawBehind {
                 drawRect(color = bubbleColors[pagerState.currentPage], size = size)
                 val (radius, centerX) = calculateBubbleDimensions(
@@ -118,6 +122,13 @@ fun calculateBubbleDimensions(
     return Pair(radius, centerX)
 }
 
+@OptIn(ExperimentalPagerApi::class, ExperimentalSnapperApi::class)
+@Composable
+fun bubblePagerFlingBehavior(pagerState: PagerState) =
+    PagerDefaults.flingBehavior(
+        state = pagerState,
+        snapAnimationSpec = spring(dampingRatio = 1.9f, stiffness = 600f),
+    )
 
 @OptIn(ExperimentalPagerApi::class)
 val PagerState.nextPage: Int
