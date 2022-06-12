@@ -27,6 +27,8 @@ import androidx.compose.animation.core.CubicBezierEasing
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
@@ -110,8 +112,16 @@ fun calculateBubbleDimensions(
         lerp(0f, 2f, value)
     }
 
-    val radius = lerp(minRadius, maxRadius, CubicBezierEasing(1f, 0f, .92f, .37f).transform(swipeValue))
-    var centerX = lerp(0.dp, maxRadius, CubicBezierEasing(1f, 0f, .92f, .37f).transform(swipeValue))
+    val radius = lerp(
+        minRadius,
+        maxRadius,
+        CubicBezierEasing(1f, 0f, .92f, .37f).transform(swipeValue)
+    )
+    var centerX = lerp(
+        0.dp,
+        maxRadius,
+        CubicBezierEasing(1f, 0f, .92f, .37f).transform(swipeValue)
+    )
 
     if (swipeDirection == SwipeDirection.LEFT) {
         centerX = -centerX
@@ -141,7 +151,9 @@ val PagerState.nextPageIndex: Int
 
 @OptIn(ExperimentalPagerApi::class)
 val PagerState.swipeDirection: SwipeDirection
-    get() = if (currentPageOffset > 0) SwipeDirection.RIGHT else SwipeDirection.LEFT
+    get() = derivedStateOf {
+        if (currentPageOffset > 0) SwipeDirection.RIGHT else SwipeDirection.LEFT
+    }.value
 
 enum class SwipeDirection {
     LEFT, RIGHT
