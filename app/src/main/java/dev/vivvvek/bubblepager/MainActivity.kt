@@ -63,7 +63,7 @@ class MainActivity : ComponentActivity() {
             modifier = Modifier.fillMaxSize(),
             bubbleMinRadius = 48.dp,
             bubbleMaxRadius = 12000.dp,
-            bubbleBottomPadding = 110.dp,
+            bubbleBottomPadding = 140.dp,
             bubbleColors = pages.map { it.color }
         ) { page ->
             Text(text = currentPageOffset.toString())

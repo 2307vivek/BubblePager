@@ -27,7 +27,6 @@ import androidx.compose.animation.core.CubicBezierEasing
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
@@ -73,7 +72,7 @@ fun BubblePager(
                     radius = radius,
                     centerX = centerX,
                     bottomPadding = bubbleBottomPadding,
-                    color = bubbleColors[pagerState.nextPageIndex]
+                    color = pagerState.getBubbleColor(bubbleColors)
                 )
             }
         ) { page ->
@@ -131,8 +130,18 @@ fun bubblePagerFlingBehavior(pagerState: PagerState) =
     )
 
 @OptIn(ExperimentalPagerApi::class)
-val PagerState.nextPageIndex: Int
-    get() = if ((currentPage + 1) == pageCount) currentPage - 1 else currentPage + 1
+fun PagerState.getBubbleColor(bubbleColors: List<Color>): Color {
+    var index = if (currentPageOffset < 0) {
+        currentPage - 1
+    } else {
+        if ((currentPage + 1) == pageCount) {
+            currentPage - 1
+        } else {
+            currentPage + 1
+        }
+    }
+    return bubbleColors[index]
+}
 
 fun lerp(start: Float, end: Float, value: Float): Float {
     return start + (end - start) * value
