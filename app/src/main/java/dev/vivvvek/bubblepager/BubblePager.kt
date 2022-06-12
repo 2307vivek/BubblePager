@@ -106,10 +106,8 @@ fun calculateBubbleDimensions(
 ): Pair<Dp, Dp> {
     // swipe value ranges between 0 to 1.0 for half of the swipe
     // and 1.0 to 0 for the other half of the swipe
-    val swipeValue = swipeProgress.absoluteValue.let {
-        val value = if (it <= 0.5) it else 1 - it
-        lerp(0f, 2f, value)
-    }
+    val swipeValue = lerp(0f, 2f, swipeProgress.absoluteValue)
+
     val radius = lerp(
         minRadius,
         maxRadius,
@@ -120,10 +118,7 @@ fun calculateBubbleDimensions(
         maxRadius,
         CubicBezierEasing(1f, 0f, .92f, .37f).transform(swipeValue)
     )
-    if (swipeDirection == SwipeDirection.LEFT) {
-        centerX = -centerX
-    }
-    if (swipeProgress.absoluteValue > 0.5) {
+    if (swipeProgress < 0) {
         centerX = -centerX
     }
     return Pair(radius, centerX)
