@@ -66,6 +66,7 @@ class MainActivity : ComponentActivity() {
             bubbleBottomPadding = 110.dp,
             bubbleColors = pages.map { it.color }
         ) { page ->
+            Text(text = currentPageOffset.toString())
             Box(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
@@ -74,6 +75,7 @@ class MainActivity : ComponentActivity() {
                     text = page.toString(),
                     style = MaterialTheme.typography.h2
                 )
+                Text(text = pagerState.targetPage.toString())
             }
         }
     }

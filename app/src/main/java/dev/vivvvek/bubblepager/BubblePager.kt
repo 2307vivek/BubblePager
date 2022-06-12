@@ -28,7 +28,6 @@ import androidx.compose.animation.core.spring
 import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
@@ -111,7 +110,6 @@ fun calculateBubbleDimensions(
         val value = if (it <= 0.5) it else 1 - it
         lerp(0f, 2f, value)
     }
-
     val radius = lerp(
         minRadius,
         maxRadius,
@@ -122,7 +120,6 @@ fun calculateBubbleDimensions(
         maxRadius,
         CubicBezierEasing(1f, 0f, .92f, .37f).transform(swipeValue)
     )
-
     if (swipeDirection == SwipeDirection.LEFT) {
         centerX = -centerX
     }
@@ -143,11 +140,6 @@ fun bubblePagerFlingBehavior(pagerState: PagerState) =
 @OptIn(ExperimentalPagerApi::class)
 val PagerState.nextPageIndex: Int
     get() = if ((currentPage + 1) == pageCount) currentPage - 1 else currentPage + 1
-
-// @OptIn(ExperimentalPagerApi::class)
-// fun PagerState.bubbleColor(colors: List<Color>) : Color {
-//    //val page = currentPage
-// }
 
 @OptIn(ExperimentalPagerApi::class)
 val PagerState.swipeDirection: SwipeDirection
