@@ -66,7 +66,6 @@ fun BubblePager(
                 drawRect(color = bubbleColors[pagerState.currentPage], size = size)
                 val (radius, centerX) = calculateBubbleDimensions(
                     swipeProgress = pagerState.currentPageOffset,
-                    swipeDirection = pagerState.swipeDirection,
                     minRadius = bubbleMinRadius,
                     maxRadius = bubbleMaxRadius
                 )
@@ -100,7 +99,6 @@ fun DrawScope.drawBubble(
 
 fun calculateBubbleDimensions(
     swipeProgress: Float,
-    swipeDirection: SwipeDirection,
     minRadius: Dp,
     maxRadius: Dp
 ): Pair<Dp, Dp> {
@@ -135,16 +133,6 @@ fun bubblePagerFlingBehavior(pagerState: PagerState) =
 @OptIn(ExperimentalPagerApi::class)
 val PagerState.nextPageIndex: Int
     get() = if ((currentPage + 1) == pageCount) currentPage - 1 else currentPage + 1
-
-@OptIn(ExperimentalPagerApi::class)
-val PagerState.swipeDirection: SwipeDirection
-    get() = derivedStateOf {
-        if (currentPageOffset > 0) SwipeDirection.RIGHT else SwipeDirection.LEFT
-    }.value
-
-enum class SwipeDirection {
-    LEFT, RIGHT
-}
 
 fun lerp(start: Float, end: Float, value: Float): Float {
     return start + (end - start) * value
