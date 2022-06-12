@@ -23,12 +23,10 @@
  */
 package dev.vivvvek.bubblepager
 
-import android.util.Log
 import androidx.compose.animation.core.CubicBezierEasing
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
@@ -104,7 +102,7 @@ fun calculateBubbleDimensions(
     swipeDirection: SwipeDirection,
     minRadius: Dp,
     maxRadius: Dp
-) : Pair<Dp, Dp> {
+): Pair<Dp, Dp> {
     // swipe value ranges between 0 to 1.0 for half of the swipe
     // and 1.0 to 0 for the other half of the swipe
     val swipeValue = swipeProgress.absoluteValue.let {
@@ -112,8 +110,8 @@ fun calculateBubbleDimensions(
         lerp(0f, 2f, value)
     }
 
-    val radius = lerp(minRadius, maxRadius, CubicBezierEasing(1f,0f,.92f,.37f).transform(swipeValue))
-    var centerX = lerp(0.dp, maxRadius, CubicBezierEasing(1f,0f,.92f,.37f).transform(swipeValue))
+    val radius = lerp(minRadius, maxRadius, CubicBezierEasing(1f, 0f, .92f, .37f).transform(swipeValue))
+    var centerX = lerp(0.dp, maxRadius, CubicBezierEasing(1f, 0f, .92f, .37f).transform(swipeValue))
 
     if (swipeDirection == SwipeDirection.LEFT) {
         centerX = -centerX
@@ -136,10 +134,10 @@ fun bubblePagerFlingBehavior(pagerState: PagerState) =
 val PagerState.nextPageIndex: Int
     get() = if ((currentPage + 1) == pageCount) currentPage - 1 else currentPage + 1
 
-//@OptIn(ExperimentalPagerApi::class)
-//fun PagerState.bubbleColor(colors: List<Color>) : Color {
+// @OptIn(ExperimentalPagerApi::class)
+// fun PagerState.bubbleColor(colors: List<Color>) : Color {
 //    //val page = currentPage
-//}
+// }
 
 @OptIn(ExperimentalPagerApi::class)
 val PagerState.swipeDirection: SwipeDirection
