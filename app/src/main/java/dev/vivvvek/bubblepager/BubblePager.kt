@@ -24,6 +24,7 @@
 package dev.vivvvek.bubblepager
 
 import androidx.compose.animation.core.CubicBezierEasing
+import androidx.compose.animation.core.Easing
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.layout.Box
@@ -66,6 +67,7 @@ fun BubblePager(
                 drawRect(color = bubbleColors[pagerState.currentPage], size = size)
                 val (radius, centerX) = calculateBubbleDimensions(
                     swipeProgress = pagerState.currentPageOffset,
+                    easing = CubicBezierEasing(1f, 0f, .92f, .62f),
                     minRadius = bubbleMinRadius,
                     maxRadius = bubbleMaxRadius
                 )
@@ -99,6 +101,7 @@ fun DrawScope.drawBubble(
 
 fun calculateBubbleDimensions(
     swipeProgress: Float,
+    easing: Easing,
     minRadius: Dp,
     maxRadius: Dp
 ): Pair<Dp, Dp> {
@@ -109,12 +112,12 @@ fun calculateBubbleDimensions(
     val radius = lerp(
         minRadius,
         maxRadius,
-        CubicBezierEasing(1f, 0f, .92f, .62f).transform(swipeValue)
+        easing.transform(swipeValue)
     )
     var centerX = lerp(
         0.dp,
         maxRadius,
-        CubicBezierEasing(1f, 0f, .92f, .62f).transform(swipeValue)
+        easing.transform(swipeValue)
     )
     if (swipeProgress < 0) {
         centerX = -centerX
