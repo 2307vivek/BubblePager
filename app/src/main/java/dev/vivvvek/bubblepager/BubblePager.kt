@@ -26,11 +26,11 @@ package dev.vivvvek.bubblepager
 import androidx.compose.animation.core.CubicBezierEasing
 import androidx.compose.animation.core.Easing
 import androidx.compose.animation.core.spring
-import androidx.compose.animation.core.updateTransition
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.DrawScope
@@ -52,35 +52,49 @@ fun BubblePager(
     pagerState: PagerState,
     pageCount: Int,
     modifier: Modifier = Modifier,
-    bubbleMinRadius: Dp,
-    bubbleMaxRadius: Dp,
-    bubbleBottomPadding: Dp,
+    bubbleMinRadius: Dp = 48.dp,
+    bubbleMaxRadius: Dp = 12000.dp,
+    bubbleBottomPadding: Dp = 140.dp,
     bubbleColors: List<Color>,
     content: @Composable PagerScope.(Int) -> Unit
 ) {
     Box(modifier = modifier) {
+        Canvas(modifier = Modifier.fillMaxSize()) {
+            drawRect(color = bubbleColors[pagerState.currentPage], size = size)
+            val (radius, centerX) = calculateBubbleDimensions(
+                swipeProgress = pagerState.currentPageOffset,
+                easing = CubicBezierEasing(1f, 0f, .92f, .62f),
+                minRadius = bubbleMinRadius,
+                maxRadius = bubbleMaxRadius
+            )
+            drawBubble(
+                radius = radius,
+                centerX = centerX,
+                bottomPadding = bubbleBottomPadding,
+                color = pagerState.getBubbleColor(bubbleColors)
+            )
+            drawNextBubble(bubbleMinRadius, bubbleBottomPadding)
+        }
         HorizontalPager(
             count = pageCount,
             state = pagerState,
-            flingBehavior = bubblePagerFlingBehavior(pagerState),
-            modifier = modifier.drawBehind {
-                drawRect(color = bubbleColors[pagerState.currentPage], size = size)
-                val (radius, centerX) = calculateBubbleDimensions(
-                    swipeProgress = pagerState.currentPageOffset,
-                    easing = CubicBezierEasing(1f, 0f, .92f, .62f),
-                    minRadius = bubbleMinRadius,
-                    maxRadius = bubbleMaxRadius
-                )
-                drawBubble(
-                    radius = radius,
-                    centerX = centerX,
-                    bottomPadding = bubbleBottomPadding,
-                    color = pagerState.getBubbleColor(bubbleColors)
-                )
-            }
+            flingBehavior = bubblePagerFlingBehavior(pagerState)
         ) { page ->
             content(page)
         }
+    }
+}
+
+fun DrawScope.drawNextBubble(
+    radius: Dp,
+    bottomPadding: Dp
+) {
+    translate(size.width / 2) {
+        drawCircle(
+            radius = radius.toPx(),
+            color = Color.Red,
+            center = Offset(0.dp.toPx(), size.height - bottomPadding.toPx())
+        )
     }
 }
 
@@ -108,7 +122,6 @@ fun calculateBubbleDimensions(
     // swipe value ranges between 0 to 1.0 for half of the swipe
     // and 1.0 to 0 for the other half of the swipe
     val swipeValue = lerp(0f, 2f, swipeProgress.absoluteValue)
-
     val radius = lerp(
         minRadius,
         maxRadius,
@@ -135,7 +148,7 @@ fun bubblePagerFlingBehavior(pagerState: PagerState) =
 
 @OptIn(ExperimentalPagerApi::class)
 fun PagerState.getBubbleColor(bubbleColors: List<Color>): Color {
-    var index = if (currentPageOffset < 0) {
+    val index = if (currentPageOffset < 0) {
         currentPage - 1
     } else {
         if ((currentPage + 1) == pageCount) {

@@ -35,7 +35,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.dp
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.PagerState
 import com.google.accompanist.pager.rememberPagerState
@@ -61,9 +60,6 @@ class MainActivity : ComponentActivity() {
             pagerState = pagerState,
             pageCount = pages.size,
             modifier = Modifier.fillMaxSize(),
-            bubbleMinRadius = 48.dp,
-            bubbleMaxRadius = 12000.dp,
-            bubbleBottomPadding = 140.dp,
             bubbleColors = pages.map { it.color }
         ) { page ->
             Text(text = currentPageOffset.toString())
