@@ -28,13 +28,12 @@ import androidx.compose.animation.core.Easing
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
@@ -74,31 +73,31 @@ fun BubblePager(
         animationSpec = tween(350)
     )
     Box(modifier = modifier) {
-        Canvas(modifier = Modifier.fillMaxSize()) {
-            drawRect(color = bubbleColors[pagerState.currentPage], size = size)
-            val (radius, centerX) = calculateBubbleDimensions(
-                swipeProgress = pagerState.currentPageOffset,
-                easing = CubicBezierEasing(1f, 0f, .92f, .62f),
-                minRadius = bubbleMinRadius,
-                maxRadius = bubbleMaxRadius
-            )
-            drawBubble(
-                radius = radius,
-                centerX = centerX,
-                bottomPadding = bubbleBottomPadding,
-                color = pagerState.getBubbleColor(bubbleColors)
-            )
-            drawBubbleWithIcon(
-                radius = arrowBubbleRadius,
-                bottomPadding = bubbleBottomPadding,
-                color = pagerState.getNextBubbleColor(bubbleColors),
-                icon = icon,
-            )
-        }
         HorizontalPager(
             count = pageCount,
             state = pagerState,
-            flingBehavior = bubblePagerFlingBehavior(pagerState)
+            flingBehavior = bubblePagerFlingBehavior(pagerState),
+            modifier = Modifier.drawBehind {
+                drawRect(color = bubbleColors[pagerState.currentPage], size = size)
+                val (radius, centerX) = calculateBubbleDimensions(
+                    swipeProgress = pagerState.currentPageOffset,
+                    easing = CubicBezierEasing(1f, 0f, .92f, .62f),
+                    minRadius = bubbleMinRadius,
+                    maxRadius = bubbleMaxRadius
+                )
+                drawBubble(
+                    radius = radius,
+                    centerX = centerX,
+                    bottomPadding = bubbleBottomPadding,
+                    color = pagerState.getBubbleColor(bubbleColors)
+                )
+                drawBubbleWithIcon(
+                    radius = arrowBubbleRadius,
+                    bottomPadding = bubbleBottomPadding,
+                    color = pagerState.getNextBubbleColor(bubbleColors),
+                    icon = icon,
+                )
+            }
         ) { page ->
             content(page)
         }
