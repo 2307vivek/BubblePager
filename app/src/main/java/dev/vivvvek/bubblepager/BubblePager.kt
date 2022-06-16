@@ -186,7 +186,7 @@ fun bubblePagerFlingBehavior(pagerState: PagerState) =
 
 @OptIn(ExperimentalPagerApi::class)
 fun PagerState.getBubbleColor(bubbleColors: List<Color>): Color {
-    var index = if (currentPageOffset < 0) {
+    val index = if (currentPageOffset < 0) {
         currentPage - 1
     } else nextSwipeablePageIndex
     return bubbleColors[index]
