@@ -25,11 +25,15 @@ package dev.vivvvek.bubblepager
 
 import androidx.compose.animation.core.CubicBezierEasing
 import androidx.compose.animation.core.Easing
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
@@ -64,7 +68,11 @@ fun BubblePager(
     vector: ImageVector = ImageVector.vectorResource(id = R.drawable.ic_chevron_right),
     content: @Composable PagerScope.(Int) -> Unit
 ) {
-    val painter = rememberVectorPainter(vector)
+    val icon = rememberVectorPainter(vector)
+    val arrowBubbleRadius by animateDpAsState(
+        targetValue = if (pagerState.isScrollAboutToStop) bubbleMinRadius else 0.dp,
+        animationSpec = tween(350)
+    )
     Box(modifier = modifier) {
         Canvas(modifier = Modifier.fillMaxSize()) {
             drawRect(color = bubbleColors[pagerState.currentPage], size = size)
@@ -80,7 +88,12 @@ fun BubblePager(
                 bottomPadding = bubbleBottomPadding,
                 color = pagerState.getBubbleColor(bubbleColors)
             )
-            drawBubbleWithIcon(bubbleMinRadius, bubbleBottomPadding, painter)
+            drawBubbleWithIcon(
+                radius = arrowBubbleRadius,
+                bottomPadding = bubbleBottomPadding,
+                color = pagerState.getNextBubbleColor(bubbleColors),
+                icon = icon,
+            )
         }
         HorizontalPager(
             count = pageCount,
@@ -95,15 +108,16 @@ fun BubblePager(
 fun DrawScope.drawBubbleWithIcon(
     radius: Dp,
     bottomPadding: Dp,
-    painter: VectorPainter
+    color: Color,
+    icon: VectorPainter
 ) {
     translate(size.width / 2) {
         drawCircle(
             radius = radius.toPx(),
-            color = Color.Red,
+            color = color,
             center = Offset(0.dp.toPx(), size.height - bottomPadding.toPx())
         )
-        with(painter) {
+        with(icon) {
             intrinsicSize.let { iconSize ->
                 translate(
                     top = size.height - bottomPadding.toPx() - iconSize.height / 2,
@@ -166,17 +180,31 @@ fun bubblePagerFlingBehavior(pagerState: PagerState) =
 
 @OptIn(ExperimentalPagerApi::class)
 fun PagerState.getBubbleColor(bubbleColors: List<Color>): Color {
-    val index = if (currentPageOffset < 0) {
-        currentPage - 1
-    } else {
-        if ((currentPage + 1) == pageCount) {
-            currentPage - 1
-        } else {
-            currentPage + 1
-        }
+    var index = nextSwipeablePageIndex
+    if (currentPageOffset < 0) {
+        index = currentPage - 1
     }
     return bubbleColors[index]
 }
+
+@OptIn(ExperimentalPagerApi::class)
+fun PagerState.getNextBubbleColor(bubbleColors: List<Color>): Color {
+    return bubbleColors[nextSwipeablePageIndex]
+}
+
+@OptIn(ExperimentalPagerApi::class)
+val PagerState.isScrollAboutToStop: Boolean
+    get() = derivedStateOf {
+        currentPageOffset.absoluteValue < 0.1
+    }.value
+
+/*
+* Returns the next swipeable page index. If the last page is reached, then the index of the
+*  previous page is returned.
+* */
+@OptIn(ExperimentalPagerApi::class)
+val PagerState.nextSwipeablePageIndex: Int
+    get() = if ((currentPage + 1) == pageCount) currentPage - 1 else currentPage + 1
 
 fun lerp(start: Float, end: Float, value: Float): Float {
     return start + (end - start) * value

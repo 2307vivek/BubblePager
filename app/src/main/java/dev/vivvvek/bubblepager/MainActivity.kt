@@ -68,7 +68,7 @@ class MainActivity : ComponentActivity() {
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text = page.toString(),
+                    text = pagerState.isScrollInProgress.toString(),
                     style = MaterialTheme.typography.h2
                 )
                 Text(text = pagerState.targetPage.toString())
