@@ -23,15 +23,20 @@
  */
 package dev.vivvvek.bubblepager
 
+import android.util.Log
+import android.view.MotionEvent
 import androidx.compose.animation.core.CubicBezierEasing
 import androidx.compose.animation.core.Easing
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
@@ -42,6 +47,8 @@ import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.VectorPainter
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.input.pointer.pointerInteropFilter
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -54,7 +61,7 @@ import com.google.accompanist.pager.PagerState
 import dev.chrisbanes.snapper.ExperimentalSnapperApi
 import kotlin.math.absoluteValue
 
-@OptIn(ExperimentalPagerApi::class)
+@OptIn(ExperimentalPagerApi::class, ExperimentalComposeUiApi::class)
 @Composable
 fun BubblePager(
     pagerState: PagerState,
@@ -179,10 +186,9 @@ fun bubblePagerFlingBehavior(pagerState: PagerState) =
 
 @OptIn(ExperimentalPagerApi::class)
 fun PagerState.getBubbleColor(bubbleColors: List<Color>): Color {
-    var index = nextSwipeablePageIndex
-    if (currentPageOffset < 0) {
-        index = currentPage - 1
-    }
+    var index = if (currentPageOffset < 0) {
+        currentPage - 1
+    } else nextSwipeablePageIndex
     return bubbleColors[index]
 }
 
