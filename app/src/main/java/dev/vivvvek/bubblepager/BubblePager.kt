@@ -33,8 +33,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.translate
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.graphics.vector.VectorPainter
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.lerp
@@ -56,8 +61,10 @@ fun BubblePager(
     bubbleMaxRadius: Dp = 12000.dp,
     bubbleBottomPadding: Dp = 140.dp,
     bubbleColors: List<Color>,
+    vector: ImageVector = ImageVector.vectorResource(id = R.drawable.ic_chevron_right),
     content: @Composable PagerScope.(Int) -> Unit
 ) {
+    val painter = rememberVectorPainter(vector)
     Box(modifier = modifier) {
         Canvas(modifier = Modifier.fillMaxSize()) {
             drawRect(color = bubbleColors[pagerState.currentPage], size = size)
@@ -73,7 +80,7 @@ fun BubblePager(
                 bottomPadding = bubbleBottomPadding,
                 color = pagerState.getBubbleColor(bubbleColors)
             )
-            drawNextBubble(bubbleMinRadius, bubbleBottomPadding)
+            drawBubbleWithIcon(bubbleMinRadius, bubbleBottomPadding, painter)
         }
         HorizontalPager(
             count = pageCount,
@@ -85,9 +92,10 @@ fun BubblePager(
     }
 }
 
-fun DrawScope.drawNextBubble(
+fun DrawScope.drawBubbleWithIcon(
     radius: Dp,
-    bottomPadding: Dp
+    bottomPadding: Dp,
+    painter: VectorPainter
 ) {
     translate(size.width / 2) {
         drawCircle(
@@ -95,6 +103,16 @@ fun DrawScope.drawNextBubble(
             color = Color.Red,
             center = Offset(0.dp.toPx(), size.height - bottomPadding.toPx())
         )
+        with(painter) {
+            intrinsicSize.let { iconSize ->
+                translate(
+                    top = size.height - bottomPadding.toPx() - iconSize.height / 2,
+                    left = -(iconSize.width / 2) + 8 // adding a magic number to optically center the icon
+                ) {
+                    draw(size = iconSize, colorFilter = ColorFilter.tint(Color.Blue))
+                }
+            }
+        }
     }
 }
 
