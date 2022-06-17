@@ -28,6 +28,7 @@ import androidx.compose.animation.core.Easing
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.interaction.collectIsDraggedAsState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
@@ -69,8 +70,9 @@ fun BubblePager(
     content: @Composable PagerScope.(Int) -> Unit
 ) {
     val icon = rememberVectorPainter(vector)
+    val isDragged by pagerState.interactionSource.collectIsDraggedAsState()
     val arrowBubbleRadius by animateDpAsState(
-        targetValue = if (pagerState.isScrollAboutToStop) bubbleMinRadius else 0.dp,
+        targetValue = if (pagerState.shouldHideBubble(isDragged)) 0.dp else bubbleMinRadius,
         animationSpec = tween(350)
     )
     Box(modifier = modifier) {
@@ -192,14 +194,20 @@ fun PagerState.getNextBubbleColor(bubbleColors: List<Color>): Color {
 }
 
 @OptIn(ExperimentalPagerApi::class)
-val PagerState.isScrollAboutToStop: Boolean
-    get() = derivedStateOf {
-        currentPageOffset.absoluteValue < 0.1
-    }.value
+fun PagerState.shouldHideBubble(isDragged: Boolean): Boolean = derivedStateOf {
+    var b = false
+    if (isDragged) {
+        b = true
+    }
+    if (currentPageOffset .absoluteValue> 0.1) {
+        b = true
+    }
+    b
+}.value
 
 /*
-* Returns the next swipeable page index. If the last page is reached, then the index of the
-*  previous page is returned.
+* Returns the next swipeable page index. If the last page is reached,
+* then the index of the previous page is returned.
 * */
 @OptIn(ExperimentalPagerApi::class)
 val PagerState.nextSwipeablePageIndex: Int

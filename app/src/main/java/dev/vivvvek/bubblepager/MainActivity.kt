@@ -26,6 +26,7 @@ package dev.vivvvek.bubblepager
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.MaterialTheme
@@ -68,10 +69,9 @@ class MainActivity : ComponentActivity() {
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text = pagerState.isScrollInProgress.toString(),
+                    text = page.toString(),
                     style = MaterialTheme.typography.h2
                 )
-                Text(text = pagerState.targetPage.toString())
             }
         }
     }
