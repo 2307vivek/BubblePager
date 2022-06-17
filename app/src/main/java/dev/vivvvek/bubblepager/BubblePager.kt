@@ -26,6 +26,7 @@ package dev.vivvvek.bubblepager
 import androidx.compose.animation.core.CubicBezierEasing
 import androidx.compose.animation.core.Easing
 import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.interaction.collectIsDraggedAsState
@@ -37,13 +38,17 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.graphics.drawscope.scale
 import androidx.compose.ui.graphics.drawscope.translate
+import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.VectorPainter
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -69,10 +74,15 @@ fun BubblePager(
     vector: ImageVector = ImageVector.vectorResource(id = R.drawable.ic_chevron_right),
     content: @Composable PagerScope.(Int) -> Unit
 ) {
+    val density = LocalDensity.current
     val icon = rememberVectorPainter(vector)
     val isDragged by pagerState.interactionSource.collectIsDraggedAsState()
     val arrowBubbleRadius by animateDpAsState(
         targetValue = if (pagerState.shouldHideBubble(isDragged)) 0.dp else bubbleMinRadius,
+        animationSpec = tween(350)
+    )
+    val arrowIconSize by animateDpAsState(
+        targetValue = if (pagerState.shouldHideBubble(isDragged)) 0.dp else vector.defaultHeight,
         animationSpec = tween(350)
     )
     Box(modifier = modifier) {
@@ -99,6 +109,7 @@ fun BubblePager(
                     bottomPadding = bubbleBottomPadding,
                     color = pagerState.getNextBubbleColor(bubbleColors),
                     icon = icon,
+                    iconSize = arrowIconSize
                 )
             }
         ) { page ->
@@ -111,7 +122,8 @@ fun DrawScope.drawBubbleWithIcon(
     radius: Dp,
     bottomPadding: Dp,
     color: Color,
-    icon: VectorPainter
+    icon: VectorPainter,
+    iconSize: Dp
 ) {
     translate(size.width / 2) {
         drawCircle(
@@ -120,12 +132,12 @@ fun DrawScope.drawBubbleWithIcon(
             center = Offset(0.dp.toPx(), size.height - bottomPadding.toPx())
         )
         with(icon) {
-            intrinsicSize.let { iconSize ->
+            iconSize.toPx().let { iconSize ->
                 translate(
-                    top = size.height - bottomPadding.toPx() - iconSize.height / 2,
-                    left = -(iconSize.width / 2) + 8 // adding a magic number to optically center the icon
+                    top = size.height - bottomPadding.toPx() - iconSize / 2,
+                    left = -(iconSize / 2) + 8 // adding a magic number to optically center the icon
                 ) {
-                    draw(size = iconSize, colorFilter = ColorFilter.tint(Color.Blue))
+                    draw(size = Size(iconSize, iconSize), colorFilter = ColorFilter.tint(Color.Blue))
                 }
             }
         }
@@ -199,7 +211,7 @@ fun PagerState.shouldHideBubble(isDragged: Boolean): Boolean = derivedStateOf {
     if (isDragged) {
         b = true
     }
-    if (currentPageOffset .absoluteValue> 0.1) {
+    if (currentPageOffset.absoluteValue > 0.1) {
         b = true
     }
     b
