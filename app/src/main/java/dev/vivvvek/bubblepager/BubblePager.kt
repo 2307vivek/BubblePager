@@ -74,7 +74,6 @@ fun BubblePager(
     vector: ImageVector = ImageVector.vectorResource(id = R.drawable.ic_chevron_right),
     content: @Composable PagerScope.(Int) -> Unit
 ) {
-    val density = LocalDensity.current
     val icon = rememberVectorPainter(vector)
     val isDragged by pagerState.interactionSource.collectIsDraggedAsState()
     val arrowBubbleRadius by animateDpAsState(
