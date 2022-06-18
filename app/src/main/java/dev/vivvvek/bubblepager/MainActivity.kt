@@ -26,23 +26,21 @@ package dev.vivvvek.bubblepager
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.interaction.collectIsPressedAsState
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.PagerState
 import com.google.accompanist.pager.rememberPagerState
 import dev.vivvvek.bubblepager.ui.theme.BubblePagerTheme
 
 @OptIn(ExperimentalPagerApi::class)
-class MainActivity : ComponentActivity() {
+class MainActivity: ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -54,35 +52,48 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+}
 
-    @Composable
-    fun BubblePagerContent(pagerState: PagerState) {
-        BubblePager(
-            pagerState = pagerState,
-            pageCount = pages.size,
-            modifier = Modifier.fillMaxSize(),
-            bubbleColors = pages.map { it.color }
-        ) { page ->
-            Text(text = currentPageOffset.toString())
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = page.toString(),
-                    style = MaterialTheme.typography.h2
-                )
-            }
+@OptIn(ExperimentalPagerApi::class)
+@Composable
+fun BubblePagerContent(pagerState: PagerState) {
+    BubblePager(
+        pagerState = pagerState,
+        pageCount = pages.size,
+        modifier = Modifier.fillMaxSize(),
+        bubbleColors = pages.map { it.color }
+    ) { page ->
+        Column(modifier = Modifier.fillMaxSize()) {
+            Image(painter = painterResource(id = pages[page].content.imageId), contentDescription = "")
         }
     }
 }
 
 val pages = listOf(
-    Page(1, Color.White),
-    Page(2, Color(0xFFFFA6A6)),
-    Page(3, Color(0xFF3E09AD)),
-    Page(4, Color(0xFFF1BB53)),
-    Page(5, Color.Gray),
+    Page(
+        id = 1,
+        content = PageContent(R.drawable.ic_interests, "Choose your interests"),
+        color = Color(0xFF103E85)
+    ),
+    Page(
+        id = 2,
+        content = PageContent(R.drawable.ic_launcher_background, "Choose your interests"),
+        color = Color(0xFFDF708B)
+    ),
+    Page(
+        id = 3,
+        content = PageContent(R.drawable.ic_launcher_foreground, "Choose your interests"),
+        color = Color(0xFFFFFFFF)
+    ),
 )
 
-data class Page(val id: Int, val color: Color)
+data class Page(
+    val id: Int,
+    val content: PageContent,
+    val color: Color
+)
+
+data class PageContent(
+    val imageId: Int,
+    val text: String
+)

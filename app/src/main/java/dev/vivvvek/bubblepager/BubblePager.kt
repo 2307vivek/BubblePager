@@ -61,7 +61,7 @@ import com.google.accompanist.pager.PagerState
 import dev.chrisbanes.snapper.ExperimentalSnapperApi
 import kotlin.math.absoluteValue
 
-@OptIn(ExperimentalPagerApi::class, ExperimentalComposeUiApi::class)
+@OptIn(ExperimentalPagerApi::class)
 @Composable
 fun BubblePager(
     pagerState: PagerState,
@@ -71,7 +71,7 @@ fun BubblePager(
     bubbleMaxRadius: Dp = 12000.dp,
     bubbleBottomPadding: Dp = 140.dp,
     bubbleColors: List<Color>,
-    vector: ImageVector = ImageVector.vectorResource(id = R.drawable.ic_chevron_right),
+    vector: ImageVector = ImageVector.vectorResource(id = R.drawable.ic_right),
     content: @Composable PagerScope.(Int) -> Unit
 ) {
     val icon = rememberVectorPainter(vector)
