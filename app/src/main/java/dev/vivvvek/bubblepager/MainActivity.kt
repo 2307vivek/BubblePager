@@ -42,10 +42,7 @@ import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
-import androidx.compose.material.icons.filled.LocationOn
-import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -61,7 +58,7 @@ import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import dev.vivvvek.bubblepager.ui.theme.BubblePagerTheme
 
 @OptIn(ExperimentalPagerApi::class)
-class MainActivity: ComponentActivity() {
+class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -125,7 +122,7 @@ fun BubblePagerContent(pagerState: PagerState) {
 @Composable
 fun PagerTopAppBar(page: Int, modifier: Modifier = Modifier) {
     TopAppBar(
-        title = {  },
+        title = { },
         backgroundColor = Color.Transparent,
         elevation = 0.dp,
         navigationIcon = {
@@ -133,7 +130,7 @@ fun PagerTopAppBar(page: Int, modifier: Modifier = Modifier) {
                 Icon(
                     imageVector = Icons.Default.KeyboardArrowLeft,
                     contentDescription = "Left Icon",
-                    //tint = if (page == 2) Color.Black else Color.White
+                    // tint = if (page == 2) Color.Black else Color.White
                 )
             }
         },
@@ -142,7 +139,7 @@ fun PagerTopAppBar(page: Int, modifier: Modifier = Modifier) {
                 Icon(
                     imageVector = Icons.Default.MoreVert,
                     contentDescription = "Menu icon",
-                    //tint = if (page == 2) Color.Black else Color.White
+                    // tint = if (page == 2) Color.Black else Color.White
                 )
             }
         },
@@ -150,4 +147,3 @@ fun PagerTopAppBar(page: Int, modifier: Modifier = Modifier) {
         modifier = modifier
     )
 }
-
