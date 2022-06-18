@@ -136,7 +136,7 @@ fun DrawScope.drawBubbleWithIcon(
                     top = size.height - bottomPadding.toPx() - iconSize / 2,
                     left = -(iconSize / 2) + 8 // adding a magic number to optically center the icon
                 ) {
-                    draw(size = Size(iconSize, iconSize), colorFilter = ColorFilter.tint(Color.Blue))
+                    draw(size = Size(iconSize, iconSize))
                 }
             }
         }
