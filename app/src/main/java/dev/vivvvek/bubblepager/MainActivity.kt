@@ -57,6 +57,7 @@ import androidx.compose.ui.unit.dp
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.PagerState
 import com.google.accompanist.pager.rememberPagerState
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import dev.vivvvek.bubblepager.ui.theme.BubblePagerTheme
 
 @OptIn(ExperimentalPagerApi::class)
@@ -66,6 +67,13 @@ class MainActivity: ComponentActivity() {
         setContent {
             BubblePagerTheme {
                 val pagerState = rememberPagerState()
+
+                val systemUiController = rememberSystemUiController()
+                systemUiController.setSystemBarsColor(
+                    color = pages[pagerState.currentPage].color,
+                    darkIcons = pagerState.currentPage == 2
+                )
+
                 Surface(modifier = Modifier.fillMaxSize()) {
                     BubblePagerContent(pagerState = pagerState)
                 }
