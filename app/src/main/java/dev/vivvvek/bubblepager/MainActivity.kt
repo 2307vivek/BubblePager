@@ -36,6 +36,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
@@ -122,18 +123,22 @@ fun PagerTopAppBar(page: Int, modifier: Modifier = Modifier) {
         backgroundColor = Color.Transparent,
         elevation = 0.dp,
         navigationIcon = {
-            Icon(
-                imageVector = Icons.Default.KeyboardArrowLeft,
-                contentDescription = "Left Icon",
-                //tint = if (page == 2) Color.Black else Color.White
-            )
+            IconButton(onClick = { /*TODO*/ }) {
+                Icon(
+                    imageVector = Icons.Default.KeyboardArrowLeft,
+                    contentDescription = "Left Icon",
+                    //tint = if (page == 2) Color.Black else Color.White
+                )
+            }
         },
         actions = {
-            Icon(
-                imageVector = Icons.Default.MoreVert,
-                contentDescription = "Menu icon",
-                //tint = if (page == 2) Color.Black else Color.White
-            )
+            IconButton(onClick = { /*TODO*/ }) {
+                Icon(
+                    imageVector = Icons.Default.MoreVert,
+                    contentDescription = "Menu icon",
+                    //tint = if (page == 2) Color.Black else Color.White
+                )
+            }
         },
         contentColor = if (page == 2) Color.Black else Color.White,
         modifier = modifier
