@@ -109,9 +109,7 @@ fun BubblePagerContent(pagerState: PagerState) {
         }
         PagerTopAppBar(
             page = pagerState.currentPage,
-            modifier = Modifier
-                .wrapContentSize()
-                .padding(horizontal = 8.dp)
+            modifier = Modifier.wrapContentSize()
         )
     }
 }
