@@ -17,6 +17,7 @@
             android:name=".MainActivity"
             android:exported="true"
             android:label="@string/app_name"
+            android:screenOrientation="portrait"
             android:theme="@style/Theme.BubblePager">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
