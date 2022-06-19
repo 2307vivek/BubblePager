@@ -4,6 +4,10 @@ plugins {
 }
 
 android {
+    signingConfigs {
+        'pager-release' {
+        }
+    }
     compileSdk 32
 
     defaultConfig {

@@ -130,7 +130,6 @@ fun PagerTopAppBar(page: Int, modifier: Modifier = Modifier) {
                 Icon(
                     imageVector = Icons.Default.KeyboardArrowLeft,
                     contentDescription = "Left Icon",
-                    // tint = if (page == 2) Color.Black else Color.White
                 )
             }
         },
@@ -139,7 +138,6 @@ fun PagerTopAppBar(page: Int, modifier: Modifier = Modifier) {
                 Icon(
                     imageVector = Icons.Default.MoreVert,
                     contentDescription = "Menu icon",
-                    // tint = if (page == 2) Color.Black else Color.White
                 )
             }
         },
