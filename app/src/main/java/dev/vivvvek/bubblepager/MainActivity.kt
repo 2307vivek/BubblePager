@@ -34,6 +34,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
@@ -51,6 +52,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.core.view.WindowCompat
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.PagerState
 import com.google.accompanist.pager.rememberPagerState
@@ -61,13 +63,14 @@ import dev.vivvvek.bubblepager.ui.theme.BubblePagerTheme
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        WindowCompat.setDecorFitsSystemWindows(window, false)
         setContent {
             BubblePagerTheme {
                 val pagerState = rememberPagerState()
 
                 val systemUiController = rememberSystemUiController()
                 systemUiController.setSystemBarsColor(
-                    color = pages[pagerState.currentPage].color,
+                    color = Color.Transparent,
                     darkIcons = pagerState.currentPage == 2
                 )
 
@@ -114,7 +117,9 @@ fun BubblePagerContent(pagerState: PagerState) {
         }
         PagerTopAppBar(
             page = pagerState.currentPage,
-            modifier = Modifier.wrapContentSize()
+            modifier = Modifier
+                .wrapContentSize()
+                .statusBarsPadding()
         )
     }
 }
